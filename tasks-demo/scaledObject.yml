@@ -1,0 +1,41 @@
+apiVersion: keda.sh/v1alpha1
+kind: TriggerAuthentication
+metadata:
+  name: keda-trigger-auth-postgresql-secret
+spec:
+  secretTargetRef:
+ 
+  - parameter: connection
+    name: postgresql-secrets
+    key: postgresql_conn_str
+    
+ 
+apiVersion: keda.sh/v1alpha1
+kind: ScaledObject
+metadata:
+  name: airflow-workers
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1 
+    name: airflow-worker-nginx
+  pollingInterval: 5
+  cooldownPeriod:  10
+  idleReplicaCount: 0
+  minReplicaCount: 0
+  maxReplicaCount: 10
+  fallback: 
+    failureThreshold: 5
+    replicas: 6
+  triggers:
+  - type: postgresql
+    metadata:
+      userName: "postgres"
+      passwordFromEnv: PASSWORD
+      host: database-1.chuiikqwloka.us-east-1.rds.amazonaws.com
+      port: "5432"
+      dbName: "postgres"
+      targetQueryValue: "10"
+      query: "SELECT value FROM count"
+      sslmode: disable
+    authenticationRef:
+      name: keda-trigger-auth-postgresql-secret

@@ -1,0 +1,19 @@
+apiVersion: keda.sh/v1alpha1
+kind: TriggerAuthentication
+metadata:
+  name: trigger-auth-postgres
+spec:
+  secretTargetRef:
+    - parameter: userName
+      name: app-user-name
+      key: postgres
+    - parameter: password
+      name: app-password
+      key: Nelsonraj26
+    - parameter: host
+      name: host
+      key: database-1.chuiikqwloka.us-east-1.rds.amazonaws.com
+    - parameter: dbName
+      name: app-dbname
+      key: postgres
+
