@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: airflow-worker-nginx
+  namespace: keda
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: airflow-worker-nginx
+  template:
+    metadata:
+      labels:
+        app: airflow-worker-nginx
+    spec:
+      containers:
+        - name: nginx
+          image: nginx:latest
+          ports:
+            - containerPort: 80
+          env:
+            - name: AIRFLOW_CONN_AIRFLOW_DB
+              value: postgresql://postgres@database-1.chuiikqwloka.us-east-1.rds.amazonaws.com
+            - name: PASSWORD
+              value: Nelsonraj26  
+            - name: CONNECTION_STRING
+              valueFrom:
+                secretKeyRef:
+                  name: postgresql-secrets
+                  key: postgresql_conn_str
+
